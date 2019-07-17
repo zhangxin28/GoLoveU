@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"starbucks/hexexport/hexsource"
-	"starbucks/hexexport/utils"
+	"starbucks-tools/hexexport/hexsource"
+	"starbucks-tools/utils"
 	"time"
 
 	"github.com/cheggaaa/pb/v3"
@@ -21,7 +21,7 @@ func main() {
 fileLoop:
 	for _, file := range toHandleFiles {
 		//hexData := hexsource.GetHexData(file)
-		rowCount := hexsource.GenerateHexData("D:\\CodeSamples\\ZWGo\\src\\starbucks\\hexexport\\ITEM_REQUEST_FORM_20190529_删除隐藏页签.xlsm")
+		rowCount := hexsource.GenerateHexData("D:\\CodeSamples\\ZWGo\\src\\starbucks-tools\\hexexport\\ITEM_REQUEST_FORM_20190529_删除隐藏页签.xlsm")
 
 		if rowCount == 0 {
 			fmt.Printf("文件:\t%s\t没有数据需要计算\n", utils.GetFileName(file))
