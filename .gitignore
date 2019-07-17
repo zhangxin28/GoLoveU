@@ -1,5 +1,6 @@
 # Binaries for programs and plugins
 *.exe
+*.ex~
 *.dll
 *.so
 *.dylib
@@ -32,4 +33,5 @@ _testmain.go
 
 content/*.json
 *.xlsx
+*.xlsm
 */*.xlsx

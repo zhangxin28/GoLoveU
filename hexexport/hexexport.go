@@ -2,21 +2,62 @@ package main
 
 import (
 	"fmt"
-	"github.com/360EntSecGroup-Skylar/excelize"
+	"os"
+	"starbucks/hexexport/hexsource"
+	"starbucks/hexexport/utils"
+	"time"
+
+	"github.com/cheggaaa/pb/v3"
 )
 
-func main(){
-	f := excelize.NewFile()
-    // Create a new sheet.
-    index := f.NewSheet("Sheet2")
-    // Set value of a cell.
-    f.SetCellValue("Sheet2", "A2", "Hello world.")
-    f.SetCellValue("Sheet1", "B2", 100)
-    // Set active sheet of the workbook.
-    f.SetActiveSheet(index)
-    // Save xlsx file by the given path.
-    err := f.SaveAs("./Book1.xlsx")
-    if err != nil {
-        fmt.Println(err)
-    }
+func main() {
+	toHandleFiles, err := utils.GetFiles(hexsource.HexSourceFileNamePrefix)
+	utils.CheckError(err)
+	if len(toHandleFiles) == 0 {
+		fmt.Println("没有符合条件的HEX数据源文件")
+		utils.WaitUserEnterKeyToExit(true)
+	}
+
+fileLoop:
+	for _, file := range toHandleFiles {
+		//hexData := hexsource.GetHexData(file)
+		rowCount := hexsource.GenerateHexData("D:\\CodeSamples\\ZWGo\\src\\starbucks\\hexexport\\ITEM_REQUEST_FORM_20190529_删除隐藏页签.xlsm")
+
+		if rowCount == 0 {
+			fmt.Printf("文件:\t%s\t没有数据需要计算\n", utils.GetFileName(file))
+			fmt.Println()
+			continue fileLoop
+		}
+
+		fmt.Println()
+	}
+
+	utils.WaitUserEnterKeyToExit(false)
+}
+
+func add(x, y int) {
+	z := x + y
+	fmt.Println(z)
+}
+
+func testPb() {
+	count := 100000
+	bar := pb.New(count)
+
+	// refresh info every second (default 200ms)
+	bar.SetRefreshRate(time.Second)
+
+	// force set io.Writer, by default it's os.Stderr
+	bar.SetWriter(os.Stdout)
+
+	// start bar
+	bar.Start()
+}
+
+func testProcess() {
+	for i := 0; i != 10; i = i + 1 {
+		fmt.Fprintf(os.Stdout, "result is %d\r", i)
+		time.Sleep(time.Second * 1)
+	}
+	fmt.Println("over")
 }
