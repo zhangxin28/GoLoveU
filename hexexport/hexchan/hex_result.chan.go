@@ -1,8 +1,11 @@
 package hexchan
 
-import "fmt"
+import (
+	"fmt"
+	"starbucks-tools/utils"
+)
 
-var HexDataDispatch = make(chan int)
+var HexDataDispatch = make(chan utils.DispatchHandled)
 
 type tests struct {
 	Id   int

@@ -3,16 +3,47 @@ package utils
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
+	"time"
+
+	"github.com/360EntSecGroup-Skylar/excelize"
 )
+
+func OpenExcel(file string) *excelize.File {
+	f, err := excelize.OpenFile(file)
+	if err != nil {
+		CheckError(err)
+	}
+	return f
+}
+
+func GetSheetRowData(excelFile *excelize.File, sheetName string) ([][]string, int, int) {
+	rows, _ := excelFile.GetRows(sheetName)
+	rowCount := len(rows)
+	columnCount := len(rows[0])
+	return rows, rowCount, columnCount
+}
 
 func CheckError(err error) {
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
+		WaitUserEnterKeyToExit(false)
 	}
+}
+
+func CreateExcel(folderName string, fileNameWithoutSuffix string, sheets ...string) {
+	f := excelize.NewFile()
+	for _, sheet := range sheets {
+		f.NewSheet(sheet)
+	}
+	f.DeleteSheet("Sheet1") //delete the default sheet
+	newFileIndex := time.Now().Format("20060102150405")
+	err := f.SaveAs(fmt.Sprintf("./%s/%s_%s.xlsx", folderName, fileNameWithoutSuffix, newFileIndex))
+	CheckError(err)
 }
 
 func WaitUserEnterKeyToExit(exit bool) {
@@ -26,35 +57,40 @@ func WaitUserEnterKeyToExit(exit bool) {
 	}
 }
 
-func GetFileName(file string) string {
-	_, fileName := filepath.Split(file)
-	return fileName
+func GetFileName(file string) (fileName string, fileOnlyName string, fileSuffix string) {
+	_, fileName = filepath.Split(file)
+	fileSuffix = path.Ext(fileName)                         //获取文件后缀
+	fileOnlyName = strings.TrimSuffix(fileName, fileSuffix) //获取文件名
+	return fileName, fileOnlyName, fileSuffix
 }
 
-func GetFiles(filePrefix string) (files []string, err error) {
+func GetFiles(filePrefix string) (files []string) {
 	files = make([]string, 0, 5)
 	currentDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 
-	err = filepath.Walk(currentDir, func(filename string, fi os.FileInfo, err error) error { //遍历目录
-		//if err != nil { //忽略错误
-		// return err
-		//}
+	dirList, err := ioutil.ReadDir(currentDir)
+	CheckError(err)
 
-		if fi.IsDir() { // 忽略目录
-			return nil
-		}
-
-		if strings.HasPrefix(strings.ToUpper(fi.Name()), filePrefix) {
-			if strings.HasSuffix(strings.ToUpper(fi.Name()), ".XLSX") ||
-				strings.HasSuffix(strings.ToUpper(fi.Name()), ".XLSM") {
-				files = append(files, filename)
+	for _, v := range dirList {
+		if !v.IsDir() {
+			fileName := v.Name()
+			if strings.HasPrefix(strings.ToUpper(fileName), filePrefix) {
+				if strings.HasSuffix(strings.ToUpper(fileName), ".XLSX") ||
+					strings.HasSuffix(strings.ToUpper(fileName), ".XLSM") {
+					files = append(files, fileName)
+				}
 			}
 		}
+	}
 
-		return nil
-	})
+	return files
+}
 
-	return files, err
+func CreateNewFolder(path string) {
+	if !CheckPathExists(path) {
+		err := os.MkdirAll(fmt.Sprintf("./%s", path), os.ModePerm)
+		CheckError(err)
+	}
 }
 
 func CheckPathExists(path string) bool {
@@ -63,7 +99,7 @@ func CheckPathExists(path string) bool {
 }
 
 func GetArrayIndex(value interface{}, compareFunc CompareFunc, values ...interface{}) int {
-	result := 0
+	result := -1
 	for k, v := range values {
 		if compareFunc == nil {
 			if value == v {
@@ -76,4 +112,12 @@ func GetArrayIndex(value interface{}, compareFunc CompareFunc, values ...interfa
 		}
 	}
 	return result
+}
+
+func GetMapKeys(m map[interface{}][]interface{}) (keys []interface{}) {
+	keys = make([]interface{}, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	return keys
 }
