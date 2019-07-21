@@ -47,7 +47,6 @@ var allHexHeaderFields = map[int]string{
 	34: "最大定量-F05",
 }
 
-
 var hexDataSource = make(map[string]map[string][]string, 5)
 
 func GenerateHexData(file string) (dataLength int) {
@@ -86,6 +85,5 @@ func GenerateHexData(file string) (dataLength int) {
 }
 
 func DispatchHexDataSource() {
-
 
 }
