@@ -27,6 +27,10 @@ func main() {
 	//utils.CreateExcel(resultFolderName, fileName, "test1", "test2", "test3")
 	//hexsource.DispatchHexDataSource(toHandleFiles[0])
 
+	// for v := range hexResultChan{
+	// 	fmt.Println("HEXRESULT ",v)
+	// }
+
 	utils.WaitUserEnterKeyToExit(false)
 }
 
@@ -51,8 +55,10 @@ func doHexCompute(files []string) {
 	// step2 对生成的数据进行计算
 	go func() {
 		for v := range dlChan {
-			wg.Done()
-			go hexsource.DispatchHexDataSource(v)
+			go func(dls hexchan.DlChanStruct) {
+				defer wg.Done()
+				hexsource.DispatchHexDataSource(dls)
+			}(v)
 		}
 	}()
 	wg.Wait()

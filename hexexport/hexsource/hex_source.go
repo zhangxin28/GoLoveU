@@ -79,7 +79,7 @@ func GenerateHexData(file string, dlChan hexchan.DlChan) {
 		}
 
 		dataLength = len(headerValues[allHexHeaderFields[0]])
-		fmt.Printf("文件【%s】正在生成数据,\t数据总计:%d条,\t耗时:%s\n", fileName, dataLength, time.Since(start))
+		fmt.Printf("文件【%s】正在组装数据,\t数据总计:%d条,\t耗时:%s\n", fileName, dataLength, time.Since(start))
 	}
 
 	dlChan <- hexchan.DlChanStruct{File: file, DataSourceLength: dataLength, HexData: headerValues}

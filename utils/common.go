@@ -22,10 +22,10 @@ func OpenExcel(file string) *excelize.File {
 	return f
 }
 
-func GetSheetRowData(excelFile *excelize.File, sheetName string) ([][]string, int, int) {
-	rows, _ := excelFile.GetRows(sheetName)
-	rowCount := len(rows)
-	columnCount := len(rows[0])
+func GetSheetRowData(excelFile *excelize.File, sheetName string) (rows [][]string, rowCount int, columnCount int) {
+	rows, _ = excelFile.GetRows(sheetName)
+	rowCount = len(rows)
+	columnCount = len(rows[0])
 	return rows, rowCount, columnCount
 }
 
