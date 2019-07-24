@@ -25,7 +25,7 @@ func main() {
 	// fmt.Println()
 
 	//utils.CreateExcel(resultFolderName, fileName, "test1", "test2", "test3")
-	hexsource.DispatchHexDataSource()
+	//hexsource.DispatchHexDataSource(toHandleFiles[0])
 
 	utils.WaitUserEnterKeyToExit(false)
 }
@@ -51,16 +51,8 @@ func doHexCompute(files []string) {
 	// step2 对生成的数据进行计算
 	go func() {
 		for v := range dlChan {
-			_, fileName, _ := utils.GetFileName(v.File)
-			if v.DataSourceLength == 0 {
-				fmt.Printf("文件:\t%s\t没有数据需要计算\n", fileName)
-				fmt.Println()
-				continue
-			}
-
-			fmt.Printf("正在计算文件\t%s\t中的数据", fileName)
-			fmt.Printf("File %s has %d 条数据\n", fileName, v.DataSourceLength)
 			wg.Done()
+			go hexsource.DispatchHexDataSource(v)
 		}
 	}()
 	wg.Wait()

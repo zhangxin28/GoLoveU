@@ -4,4 +4,5 @@ package hexchan
 type DlChanStruct struct {
 	File string
 	DataSourceLength int
+	HexData map[string][]string
 }
