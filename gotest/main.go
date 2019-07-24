@@ -1,13 +1,21 @@
 package main
 
 import (
-	"fmt"
-	"starbucks-tools/gotest/structinterfacetest"
+	"fmt"	
+    "io/ioutil"
+    "log"
+    "net/http"
+	"sync"
 	"time"
+	"starbucks-tools/gotest/structinterfacetest"
+	"starbucks-tools/utils"
 )
 
 func main() {
-	testLongCoumpute()
+	testChan()
+
+
+	utils.WaitUserEnterKeyToExit(false)
 }
 
 //------------------------------------------------------------------------
@@ -74,6 +82,49 @@ func testDuration(f func()) {
 	f()
 
 	fmt.Printf("函数执行时长为:\t%s\n", time.Since(start))
+}
+
+//------------------------------------------------------------------------
+
+//------------------------------------------------------------------------
+type responseStruct struct {
+	url string
+	jsonResponses string
+	duration string
+}
+func testChan() {
+	urls := []string{
+        "http://api.douban.com/v2/book/isbn/9787218087351",
+        "http://ip.taobao.com/service/getIpInfo.php?ip=202.101.172.35",
+        "https://jsonplaceholder.typicode.com/todos/1",
+    }
+    jsonResponses := make(chan responseStruct)
+    var wg sync.WaitGroup
+    wg.Add(len(urls))
+    for _, url := range urls {
+        go func(url string) {
+			defer wg.Done()
+			start := time.Now()
+            res, err := http.Get(url)
+            if err != nil {
+                log.Fatal(err)
+            } else {
+                defer res.Body.Close()
+                body, err := ioutil.ReadAll(res.Body)
+                if err != nil {
+                    log.Fatal(err)
+                } else {
+                    jsonResponses <- responseStruct {url, string(body), fmt.Sprintf("%s",time.Since(start)) }
+                }
+            }
+        }(url)
+    }
+    go func() {
+        for response := range jsonResponses {
+            fmt.Printf("Get Response From Url %s\nReponse Body %s\nReponse Duration %s\n\n",response.url,response.jsonResponses,response.duration)
+		}		
+    }()
+    wg.Wait()	
 }
 
 //------------------------------------------------------------------------
