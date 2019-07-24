@@ -18,7 +18,7 @@ func main() {
 
 	start := time.Now()
 	doHexCompute(toHandleFiles)
-	fmt.Printf("\n计算Hex数据的消耗的时间为\t%s",time.Since(start))
+	fmt.Printf("\n计算Hex数据的消耗的时间为\t%s", time.Since(start))
 
 	// resultFolderName := fmt.Sprintf("%s_%s", fileName, "RESULT")
 	// utils.CreateNewFolder(resultFolderName)
@@ -51,7 +51,6 @@ func doHexCompute(files []string) {
 	// step2 对生成的数据进行计算
 	go func() {
 		for v := range dlChan {
-			wg.Done()
 			_, fileName, _ := utils.GetFileName(v.File)
 			if v.DataSourceLength == 0 {
 				fmt.Printf("文件:\t%s\t没有数据需要计算\n", fileName)
@@ -59,7 +58,9 @@ func doHexCompute(files []string) {
 				continue
 			}
 
+			fmt.Printf("正在计算文件\t%s\t中的数据", fileName)
 			fmt.Printf("File %s has %d 条数据\n", fileName, v.DataSourceLength)
+			wg.Done()
 		}
 	}()
 	wg.Wait()
