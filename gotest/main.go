@@ -12,8 +12,9 @@ import (
 )
 
 func main() {
+	start := time.Now()
 	testChan()
-
+	fmt.Printf("一共持续了 %s\n",time.Since(start))
 
 	utils.WaitUserEnterKeyToExit(false)
 }
@@ -93,6 +94,12 @@ type responseStruct struct {
 	duration string
 }
 func testChan() {
+	defer func() {
+		if e := recover(); e != nil {
+			utils.PrintStack()
+		}
+	}()
+	
 	urls := []string{
         "http://api.douban.com/v2/book/isbn/9787218087351",
         "http://ip.taobao.com/service/getIpInfo.php?ip=202.101.172.35",
@@ -103,7 +110,7 @@ func testChan() {
     wg.Add(len(urls))
     for _, url := range urls {
         go func(url string) {
-			defer wg.Done()
+			//defer wg.Done()
 			start := time.Now()
             res, err := http.Get(url)
             if err != nil {
@@ -121,6 +128,7 @@ func testChan() {
     }
     go func() {
         for response := range jsonResponses {
+			wg.Done()
             fmt.Printf("Get Response From Url %s\nReponse Body %s\nReponse Duration %s\n\n",response.url,response.jsonResponses,response.duration)
 		}		
     }()

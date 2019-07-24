@@ -5,6 +5,8 @@ import (
 	"starbucks-tools/hexexport/hexchan"
 	"starbucks-tools/hexexport/hexsource"
 	"starbucks-tools/utils"
+	"sync"
+	"time"
 )
 
 func main() {
@@ -13,8 +15,10 @@ func main() {
 		fmt.Println("没有符合条件的HEX数据源文件")
 		utils.WaitUserEnterKeyToExit(true)
 	}
-	doTest()
-	//doHexCompute(toHandleFiles)
+
+	start := time.Now()
+	doHexCompute(toHandleFiles)
+	fmt.Printf("\n计算Hex数据的消耗的时间为\t%s",time.Since(start))
 
 	// resultFolderName := fmt.Sprintf("%s_%s", fileName, "RESULT")
 	// utils.CreateNewFolder(resultFolderName)
@@ -26,39 +30,37 @@ func main() {
 	utils.WaitUserEnterKeyToExit(false)
 }
 
-func doTest(){
+func doHexCompute(files []string) {
 	defer func() {
-        if e := recover(); e != nil {
-            utils.PrintStack()
-        }
+		if e := recover(); e != nil {
+			utils.PrintStack()
+		}
 	}()
 
-	zero := 0
-    x := 3 / zero
-    fmt.Println("x=", x)
-}
-
-func doHexCompute(files []string){
-	defer func() {
-        if e := recover(); e != nil {
-            utils.PrintStack()
-        }
-	}()
-
+	var wg sync.WaitGroup
 	dlChan := make(hexchan.DlChan)
 	// step1 根据文件名找到EXCEL文件，然后生成需要计算的数据
 	for _, file := range files {
-		go hexsource.GenerateHexData(file, dlChan)
+		wg.Add(1)
+		go func(f string) {
+			//defer wg.Done()
+			hexsource.GenerateHexData(f, dlChan)
+		}(file)
 	}
-	close(dlChan)
 
 	// step2 对生成的数据进行计算
-	for v := range dlChan {
-		_, fileName, _ := utils.GetFileName(v.File)
-		if v.DataSourceLength == 0 {
-			fmt.Printf("文件:\t%s\t没有数据需要计算\n", fileName)
-			fmt.Println()
-			continue
+	go func() {
+		for v := range dlChan {
+			wg.Done()
+			_, fileName, _ := utils.GetFileName(v.File)
+			if v.DataSourceLength == 0 {
+				fmt.Printf("文件:\t%s\t没有数据需要计算\n", fileName)
+				fmt.Println()
+				continue
+			}
+
+			fmt.Printf("File %s has %d 条数据\n", fileName, v.DataSourceLength)
 		}
-	}
+	}()
+	wg.Wait()
 }
