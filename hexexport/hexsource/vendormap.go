@@ -1,5 +1,8 @@
 package hexsource
 
+import (
+	"starbucks-tools/utils"
+)
 
 var vendorsMap = map[string]string{
 	"929341": "00000000000040001201", //	北京美大咖啡有限公司
@@ -146,11 +149,9 @@ var vendorsMap = map[string]string{
 	"963405": "00000000000060000713", //	传典机电
 }
 
-var venderChan = make(chan string)
-
-func GetVerderMap(verdorId string) string {
-	go func(id string){
-		venderChan <- vendorsMap[verdorId]
-	}(verdorId)
-	return <-venderChan
+func GetVendor(vendorId string) string {
+	vendor := utils.GetSafeValue(func() interface{} {
+		return vendorsMap[vendorId]
+	})
+	return vendor.(string)
 }

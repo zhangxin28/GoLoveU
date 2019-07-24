@@ -4,7 +4,7 @@ package hexresult
 type BasicProductInfo struct {
 
 	// "商品编码"
-	Sku string
+	Sku string	
 	// SBI
 	SBI string
 	// 商品名称

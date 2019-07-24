@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"starbucks-tools/gotest/structinterfacetest"
+	"time"
 )
 
 func main() {
-	TestStructFuncTypeInterface()
+	testLongCoumpute()
 }
 
 //------------------------------------------------------------------------
@@ -52,6 +53,27 @@ func testVisist() {
 		value := fmt.Sprintf("%s", a)
 		visitChan <- value
 	}), 1, 2, 3, 4, 5, []string{"one", "two", "three", "four"})
+}
+
+func testLongCoumpute() {
+	a := 6.245614
+	b := 2.718
+
+	for index := 0; index < 10; index++ {
+		testDuration(func() {
+			for i := 0; i < 100000000; i++ {
+				a = a + b
+			}
+		})
+	}
+}
+
+func testDuration(f func()) {
+	start := time.Now()
+
+	f()
+
+	fmt.Printf("函数执行时长为:\t%s\n", time.Since(start))
 }
 
 //------------------------------------------------------------------------

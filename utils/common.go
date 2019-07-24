@@ -8,8 +8,9 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
-
+	"runtime/debug"
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
@@ -120,4 +121,17 @@ func GetMapKeys(m map[interface{}][]interface{}) (keys []interface{}) {
 		keys = append(keys, k)
 	}
 	return keys
+}
+
+var mapGuard sync.Mutex
+
+func GetSafeValue(f func() interface{}) (safeValue interface{}) {
+	mapGuard.Lock()
+	defer mapGuard.Unlock()
+	safeValue = f()
+	return safeValue
+}
+
+func PrintStack() {
+	debug.PrintStack()
 }

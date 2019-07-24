@@ -2,10 +2,12 @@ package hexchan
 
 import (
 	"fmt"
-	"starbucks-tools/utils"
 )
 
-var HexDataDispatch = make(chan utils.DispatchHandled)
+//var HexDataDispatch = make(chan utils.DispatchHandled)
+
+// DlChan 表明了通道：根据文件生成的数据源时需要使用的通道
+type DlChan chan DlChanStruct
 
 type tests struct {
 	Id   int

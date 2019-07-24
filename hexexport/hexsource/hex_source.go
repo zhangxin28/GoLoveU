@@ -2,8 +2,10 @@ package hexsource
 
 import (
 	"fmt"
+	"starbucks-tools/hexexport/hexchan"
 	"starbucks-tools/utils"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -49,7 +51,7 @@ var allHexHeaderFields = map[int]string{
 
 var hexDataSource = make(map[string]map[string][]string, 5)
 
-func GenerateHexData(file string) (dataLength int) {
+func GenerateHexData(file string, dlChan hexchan.DlChan) {
 	fileName, _, _ := utils.GetFileName(file)
 	start := time.Now()
 	f := utils.OpenExcel(file)
@@ -57,33 +59,42 @@ func GenerateHexData(file string) (dataLength int) {
 	fmt.Printf("正在打开文件:%s,\t耗时:%s\n", fileName, time.Since(start))
 	start = time.Now()
 
+	//最终生成的该文件中含有多少条数据
+	dataLength := 0
+
 	rows, rowCount, columnCount := utils.GetSheetRowData(f, "HEX")
+
 	//第一条显示为：商品基本资料，不做考虑
 	//第二条显示为：列的表头，不做考虑
-	if rowCount-2 <= 0 {
-		return 0
-	}
-
-	columnHeaders := make([]string, columnCount)
-	headerValues := make(map[string][]string, columnCount)
-	for columnIndex := 0; columnIndex < columnCount; columnIndex++ {
-		columnHeadValue := strings.Trim(rows[1][columnIndex], " ")
-		columnHeaders[columnIndex] = columnHeadValue
-		columnValues := make([]string, 0)
-		for rowIndex := 2; rowIndex < rowCount; rowIndex++ {
-			if strings.Trim(rows[rowIndex][0], " ") != "" {
-				columnValues = append(columnValues, strings.Trim(rows[rowIndex][columnIndex], " "))
+	if rowCount-2 > 0 {
+		headerValues := make(map[string][]string, columnCount)
+		for columnIndex := 0; columnIndex < columnCount; columnIndex++ {
+			if columnHeadValue, ok := allHexHeaderFields[columnIndex]; ok {
+				columnValues := make([]string, 0)
+				for rowIndex := 2; rowIndex < rowCount; rowIndex++ {
+					if firstColumnValue := strings.Trim(rows[rowIndex][0], " "); firstColumnValue != "" {
+						columnValues = append(columnValues, strings.Trim(rows[rowIndex][columnIndex], " "))
+					}
+				}
+				headerValues[columnHeadValue] = columnValues
 			}
 		}
-		headerValues[columnHeadValue] = columnValues
+		saveHexDatasource(headerValues, file)
+		dataLength = len(hexDataSource[file][allHexHeaderFields[0]])
+		fmt.Printf("正在生成数据,耗时:%s, \t数据总计:%d条\n", time.Since(start), dataLength)
 	}
-	hexDataSource[file] = headerValues
-	dataLength = len(hexDataSource[file][allHexHeaderFields[0]])
-	fmt.Printf("正在生成数据,耗时:%s, \t数据总计:%d条\n", time.Since(start), dataLength)
 
-	return dataLength
+	dlChan <- hexchan.DlChanStruct{File: file, DataSourceLength: dataLength}
 }
 
 func DispatchHexDataSource() {
 
+}
+
+var hexDsGuard sync.Mutex
+
+func saveHexDatasource(ds map[string][]string, mapKey string) {
+	hexDsGuard.Lock()
+	defer hexDsGuard.Unlock()
+	hexDataSource[mapKey] = ds
 }
