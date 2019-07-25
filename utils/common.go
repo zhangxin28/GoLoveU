@@ -7,10 +7,11 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
-	"runtime/debug"
+
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
@@ -130,6 +131,12 @@ func GetSafeValue(f func() interface{}) (safeValue interface{}) {
 	defer mapGuard.Unlock()
 	safeValue = f()
 	return safeValue
+}
+
+func DoSafeSave(f func()) {
+	mapGuard.Lock()
+	defer mapGuard.Unlock()
+	f()
 }
 
 func PrintStack() {

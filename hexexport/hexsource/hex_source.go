@@ -49,16 +49,13 @@ var allHexHeaderFields = map[int]string{
 	34: "最大定量-F05",
 }
 
-func GenerateHexData(file string, dlChan hexchan.DlChan) {
+func GenerateHexData(file string, dlChan hexchan.HexGenerateChan) {
 	fileName, _, _ := utils.GetFileName(file)
 	start := time.Now()
 	f := utils.OpenExcel(file)
 
 	fmt.Printf("文件【%s】正在打开,\t耗时:%s\n", fileName, time.Since(start))
 	start = time.Now()
-
-	//最终生成的该文件中含有多少条数据
-	dataLength := 0
 
 	rows, rowCount, columnCount := utils.GetSheetRowData(f, "HEX")
 	headerValues := make(map[string][]string, columnCount)
@@ -78,21 +75,21 @@ func GenerateHexData(file string, dlChan hexchan.DlChan) {
 			}
 		}
 
-		dataLength = len(headerValues[allHexHeaderFields[0]])
-		fmt.Printf("文件【%s】正在组装数据,\t数据总计:%d条,\t耗时:%s\n", fileName, dataLength, time.Since(start))
+		fmt.Printf("文件【%s】正在组装数据,\t数据总计:%d条,\t耗时:%s\n", fileName, len(headerValues[allHexHeaderFields[0]]), time.Since(start))
 	}
 
-	dlChan <- hexchan.DlChanStruct{File: file, DataSourceLength: dataLength, HexData: headerValues}
+	dlChan <- hexchan.HexGenerateResult{File: file, HexData: headerValues}
 }
 
-func DispatchHexDataSource(dls hexchan.DlChanStruct) {
-	if dls.DataSourceLength == 0 {
-		fmt.Printf("文件【%s】没有数据需要计算\n", dls.File)
+func DispatchHexDataSource(file string, hexData map[string][]string, c chan int) {
+	if len(hexData[allHexHeaderFields[0]]) == 0 {
+		fmt.Printf("文件【%s】没有数据需要计算\n", file)
 		fmt.Println()
 	}
 
-	fmt.Printf("文件【%s】的数据正在计算\n", dls.File)
+	fmt.Printf("文件【%s】的数据正在计算\n", file)
 	fmt.Println()
+	c <- 1
 }
 
 var hexDsGuard sync.Mutex

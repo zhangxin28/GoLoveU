@@ -6,8 +6,8 @@ import (
 
 //var HexDataDispatch = make(chan utils.DispatchHandled)
 
-// DlChan 表明了通道：根据文件生成的数据源时需要使用的通道
-type DlChan chan DlChanStruct
+// HexGenerateChan 表明了通道：根据文件生成的数据源时需要使用的通道
+type HexGenerateChan chan HexGenerateResult
 
 type tests struct {
 	Id   int
