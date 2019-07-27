@@ -15,7 +15,7 @@ func main() {
 	if len(toHandleFiles) == 0 {
 		fmt.Println("没有符合条件的HEX数据源文件")
 		utils.WaitUserEnterKeyToExit(true)
-	}	
+	}
 
 	// 并行执行流程：对多文件生成HEX数据
 	// 并将数据保存在通道中
@@ -40,14 +40,14 @@ func main() {
 	}
 	close(hexGenerateChan)
 
-	// 通过通道拿到计算出来的HEX数据	
+	// 通过通道拿到计算出来的HEX数据
 	// 对分配的数据进行并行计算
 	// 并将数据保存在通道中
-	computeResultChan := make(chan int)	
-	for file := range hexGenerateDataMap {
-		go func(file string){
-			hexsource.DispatchHexDataSource(file, hexGenerateDataMap[file], computeResultChan)
-		}(file)		
+	computeResultChan := make(chan int)
+	for file, data := range hexGenerateDataMap {
+		go func(file string, data map[string][]string) {
+			hexsource.DispatchHexDataSource(file, data, computeResultChan)
+		}(file, data)
 	}
 
 	// 获取通道中的HexCompute的结果数据

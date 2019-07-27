@@ -1,5 +1,12 @@
 package hexresult
 
+type HexResult struct {
+	SheetName string
+	Desc string
+	Data [][]string
+}
+
+
 // BasicProductInfo 商品基本资料
 type BasicProductInfo struct {
 
