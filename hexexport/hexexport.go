@@ -2,19 +2,19 @@ package main
 
 import (
 	"fmt"
-	"starbucks-tools/hexexport/hexchan"
-	"starbucks-tools/hexexport/hexsource"
-	"starbucks-tools/utils"
+	"starbucks/tools/hextool/hexchan"
+	"starbucks/tools/hextool/hexsource"
+	"starbucks/tools/utils/common"
 	//"sync"
 )
 
 func main() {
 	// 获取符合条件的HEX数据源文件
 	// 文件名以ITEM_REQUEST_FORM打头
-	toHandleFiles := utils.GetFiles(hexsource.HexSourceFileNamePrefix)
+	toHandleFiles := common.GetFiles(hexsource.HexSourceFileNamePrefix)
 	if len(toHandleFiles) == 0 {
 		fmt.Println("没有符合条件的HEX数据源文件")
-		utils.WaitUserEnterKeyToExit(true)
+		common.WaitUserEnterKeyToExit(true)
 	}
 
 	// 并行执行流程：对多文件生成HEX数据
@@ -31,7 +31,7 @@ func main() {
 	jobsLeft := len(toHandleFiles)
 	for hgr := range hexGenerateChan {
 		jobsLeft--
-		utils.DoSafeSave(func() {
+		common.DoSafeSave(func() {
 			hexGenerateDataMap[hgr.File] = hgr.HexData
 		})
 		if jobsLeft == 0 {
@@ -63,14 +63,14 @@ func main() {
 	}
 	close(computeResultChan)
 
-	utils.WaitUserEnterKeyToExit(false)
+	common.WaitUserEnterKeyToExit(false)
 }
 
 // func main() {
-// 	toHandleFiles := utils.GetFiles(hexsource.HexSourceFileNamePrefix)
+// 	toHandleFiles := common.GetFiles(hexsource.HexSourceFileNamePrefix)
 // 	if len(toHandleFiles) == 0 {
 // 		fmt.Println("没有符合条件的HEX数据源文件")
-// 		utils.WaitUserEnterKeyToExit(true)
+// 		common.WaitUserEnterKeyToExit(true)
 // 	}
 
 // 	start := time.Now()
@@ -99,17 +99,17 @@ func main() {
 // 	fmt.Printf("\n计算Hex数据的消耗的时间为\t%s", time.Since(start))
 
 // 	// resultFolderName := fmt.Sprintf("%s_%s", fileName, "RESULT")
-// 	// utils.CreateNewFolder(resultFolderName)
+// 	// common.CreateNewFolder(resultFolderName)
 // 	// fmt.Println()
 
-// 	//utils.CreateExcel(resultFolderName, fileName, "test1", "test2", "test3")
+// 	//common.CreateExcel(resultFolderName, fileName, "test1", "test2", "test3")
 // 	//hexsource.DispatchHexDataSource(toHandleFiles[0])
 
 // 	// for v := range hexResultChan{
 // 	// 	fmt.Println("HEXRESULT ",v)
 // 	// }
 
-// 	utils.WaitUserEnterKeyToExit(false)
+// 	common.WaitUserEnterKeyToExit(false)
 // }
 
 // func doHexCompute(files []string) {

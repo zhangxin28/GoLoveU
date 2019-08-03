@@ -2,13 +2,17 @@ package hexsource
 
 import (
 	"fmt"
-	"starbucks-tools/hexexport/hexchan"
-	"starbucks-tools/utils"
+	"starbucks/tools/hextool/excelhandler"
+	"starbucks/tools/hextool/hexchan"
+	"starbucks/tools/utils/common"
 	"strings"
 	"time"
 )
 
+// HexSourceFileNamePrefix reprents the hex soure file prefix anme
 var HexSourceFileNamePrefix = "ITEM_REQUEST_FORM"
+
+// HeaderSourceResultMap represents the hex source header mapping
 
 type HeaderSourceResultMap struct {
 	SourceName string
@@ -53,15 +57,17 @@ var allHexHeaderFields = map[int]HeaderSourceResultMap{
 	34: HeaderSourceResultMap{"最大定量-F05", "最大定量"},
 }
 
+// GenerateHexData reprents the logic to get the hex source data
 func GenerateHexData(file string, dlChan hexchan.HexGenerateChan) {
-	fileName, _, _ := utils.GetFileName(file)
+	fileName, _, _ := common.GetFileName(file)
 	start := time.Now()
-	f := utils.OpenExcel(file)
+	f, err := excelhandler.OpenExcel(file)
+	common.CheckError(err)
 
 	fmt.Printf("文件【%s】正在打开,\t耗时:%s\n", fileName, time.Since(start))
 	start = time.Now()
 
-	rows, rowCount, columnCount := utils.GetSheetRowData(f, "HEX")
+	rows, rowCount, columnCount := excelhandler.GetSheetRowData(f, "HEX")
 	headerValues := make(map[string][]string, columnCount)
 
 	//第一条显示为：商品基本资料，不做考虑
@@ -85,6 +91,7 @@ func GenerateHexData(file string, dlChan hexchan.HexGenerateChan) {
 	dlChan <- hexchan.HexGenerateResult{File: file, HexData: headerValues}
 }
 
+// DispatchHexDataSource reprents the logic to compute and dispatch the hex result data
 func DispatchHexDataSource(file string, hexData map[string][]string, c chan int) {
 	if len(hexData[allHexHeaderFields[0].SourceName]) == 0 {
 		fmt.Printf("文件【%s】没有数据需要计算\n", file)

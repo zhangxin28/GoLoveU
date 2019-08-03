@@ -1,7 +1,7 @@
 package hexsource
 
 import (
-	"starbucks-tools/utils"
+	"starbucks/tools/utils/common"
 )
 
 var vendorsMap = map[string]string{
@@ -150,7 +150,7 @@ var vendorsMap = map[string]string{
 }
 
 func GetVendor(vendorId string) string {
-	vendor := utils.GetSafeValue(func() interface{} {
+	vendor := common.GetSafeValue(func() interface{} {
 		return vendorsMap[vendorId]
 	})
 	return vendor.(string)

@@ -1,38 +1,38 @@
 package main
 
 import (
-	"fmt"	
-    "io/ioutil"
-    "log"
-    "net/http"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	sft "starbucks/tools/gotest/structinterfacetest"
+	"starbucks/tools/utils/common"
 	"sync"
 	"time"
-	"starbucks-tools/gotest/structinterfacetest"
-	"starbucks-tools/utils"
 )
 
 func main() {
 	start := time.Now()
 	testChan()
-	fmt.Printf("一共持续了 %s\n",time.Since(start))
+	fmt.Printf("一共持续了 %s\n", time.Since(start))
 
-	utils.WaitUserEnterKeyToExit(false)
+	common.WaitUserEnterKeyToExit(false)
 }
 
 //------------------------------------------------------------------------
 
-func TestStructFuncTypeInterface() {
-	structinterfacetest.HandleFunc("first default test", nil)
-	structinterfacetest.HandleFunc("second test", func(message string) {
+func testStructFuncTypeInterface() {
+	sft.HandleFunc("first default test", nil)
+	sft.HandleFunc("second test", func(message string) {
 		fmt.Printf("This is the test with : %s\n", message)
 	})
-	structinterfacetest.HandleFunc("third test", func(message string) {
+	sft.HandleFunc("third test", func(message string) {
 		fmt.Printf("This is the test with : %s\n", message)
 	})
-	structinterfacetest.DefaultRequestStruct.HandleFunc("fourth test", func(message string) {
+	sft.DefaultRequestStruct.HandleFunc("fourth test", func(message string) {
 		fmt.Printf("This is the test with : %s\n", message)
 	})
-	structinterfacetest.DefaultRequestStruct.HandleFunc("fifth test", structinterfacetest.FuncDoHandle(func(message string) {
+	sft.DefaultRequestStruct.HandleFunc("fifth test", sft.FuncDoHandle(func(message string) {
 		fmt.Printf("This is the test with : %s\n", message)
 	}))
 }
@@ -89,50 +89,51 @@ func testDuration(f func()) {
 
 //------------------------------------------------------------------------
 type responseStruct struct {
-	url string
+	url           string
 	jsonResponses string
-	duration string
+	duration      string
 }
+
 func testChan() {
 	defer func() {
 		if e := recover(); e != nil {
-			utils.PrintStack()
+			//utils.PrintStack()
 		}
 	}()
-	
+
 	urls := []string{
-        "http://api.douban.com/v2/book/isbn/9787218087351",
-        "http://ip.taobao.com/service/getIpInfo.php?ip=202.101.172.35",
-        "https://jsonplaceholder.typicode.com/todos/1",
-    }
-    jsonResponses := make(chan responseStruct)
-    var wg sync.WaitGroup
-    wg.Add(len(urls))
-    for _, url := range urls {
-        go func(url string) {
+		"http://api.douban.com/v2/book/isbn/9787218087351",
+		"http://ip.taobao.com/service/getIpInfo.php?ip=202.101.172.35",
+		"https://jsonplaceholder.typicode.com/todos/1",
+	}
+	jsonResponses := make(chan responseStruct)
+	var wg sync.WaitGroup
+	wg.Add(len(urls))
+	for _, url := range urls {
+		go func(url string) {
 			//defer wg.Done()
 			start := time.Now()
-            res, err := http.Get(url)
-            if err != nil {
-                log.Fatal(err)
-            } else {
-                defer res.Body.Close()
-                body, err := ioutil.ReadAll(res.Body)
-                if err != nil {
-                    log.Fatal(err)
-                } else {
-                    jsonResponses <- responseStruct {url, string(body), fmt.Sprintf("%s",time.Since(start)) }
-                }
-            }
-        }(url)
-    }
-    go func() {
-        for response := range jsonResponses {
+			res, err := http.Get(url)
+			if err != nil {
+				log.Fatal(err)
+			} else {
+				defer res.Body.Close()
+				body, err := ioutil.ReadAll(res.Body)
+				if err != nil {
+					log.Fatal(err)
+				} else {
+					jsonResponses <- responseStruct{url, string(body), fmt.Sprintf("%s", time.Since(start))}
+				}
+			}
+		}(url)
+	}
+	go func() {
+		for response := range jsonResponses {
 			wg.Done()
-            fmt.Printf("Get Response From Url %s\nReponse Body %s\nReponse Duration %s\n\n",response.url,response.jsonResponses,response.duration)
-		}		
-    }()
-    wg.Wait()	
+			fmt.Printf("Get Response From Url %s\nReponse Body %s\nReponse Duration %s\n\n", response.url, response.jsonResponses, response.duration)
+		}
+	}()
+	wg.Wait()
 }
 
 //------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-package utils
+package common
 
 import (
 	"bufio"
@@ -10,26 +10,12 @@ import (
 	"runtime/debug"
 	"strings"
 	"sync"
-	"time"
-
-	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
-func OpenExcel(file string) *excelize.File {
-	f, err := excelize.OpenFile(file)
-	if err != nil {
-		CheckError(err)
-	}
-	return f
-}
+// CompareFunc reprents a func type: (interface{}, interface{}) bool
+type CompareFunc func(interface{}, interface{}) bool
 
-func GetSheetRowData(excelFile *excelize.File, sheetName string) (rows [][]string, rowCount int, columnCount int) {
-	rows, _ = excelFile.GetRows(sheetName)
-	rowCount = len(rows)
-	columnCount = len(rows[0])
-	return rows, rowCount, columnCount
-}
-
+// CheckError checks error
 func CheckError(err error) {
 	if err != nil {
 		fmt.Println(err)
@@ -37,17 +23,7 @@ func CheckError(err error) {
 	}
 }
 
-func CreateExcel(folderName string, fileNameWithoutSuffix string, sheets ...string) {
-	f := excelize.NewFile()
-	for _, sheet := range sheets {
-		f.NewSheet(sheet)
-	}
-	f.DeleteSheet("Sheet1") //delete the default sheet
-	newFileIndex := time.Now().Format("20060102150405")
-	err := f.SaveAs(fmt.Sprintf("./%s/%s_%s.xlsx", folderName, fileNameWithoutSuffix, newFileIndex))
-	CheckError(err)
-}
-
+// WaitUserEnterKeyToExit waits the console applcation when use type enter
 func WaitUserEnterKeyToExit(exit bool) {
 	fmt.Println("\n\n按确认键退出...")
 	reader := bufio.NewReader(os.Stdin)
@@ -59,6 +35,7 @@ func WaitUserEnterKeyToExit(exit bool) {
 	}
 }
 
+// GetFileName gets file name
 func GetFileName(file string) (fileName string, fileOnlyName string, fileSuffix string) {
 	_, fileName = filepath.Split(file)
 	fileSuffix = path.Ext(fileName)                         //获取文件后缀
@@ -66,6 +43,7 @@ func GetFileName(file string) (fileName string, fileOnlyName string, fileSuffix 
 	return fileName, fileOnlyName, fileSuffix
 }
 
+// GetFiles gets files with the specific prefix
 func GetFiles(filePrefix string) (files []string) {
 	files = make([]string, 0, 5)
 	currentDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
@@ -88,6 +66,7 @@ func GetFiles(filePrefix string) (files []string) {
 	return files
 }
 
+// CreateNewFolder creates a sub folder under the specific folder
 func CreateNewFolder(path string) {
 	if !CheckPathExists(path) {
 		err := os.MkdirAll(fmt.Sprintf("./%s", path), os.ModePerm)
@@ -95,11 +74,13 @@ func CreateNewFolder(path string) {
 	}
 }
 
+// CheckPathExists checks the path existed or not
 func CheckPathExists(path string) bool {
 	_, err := os.Stat(path)
 	return !os.IsNotExist(err)
 }
 
+// GetArrayIndex returns the array index
 func GetArrayIndex(value interface{}, compareFunc CompareFunc, values ...interface{}) int {
 	result := -1
 	for k, v := range values {
@@ -116,6 +97,7 @@ func GetArrayIndex(value interface{}, compareFunc CompareFunc, values ...interfa
 	return result
 }
 
+// GetMapKeys returns the keys for a map
 func GetMapKeys(m map[interface{}][]interface{}) (keys []interface{}) {
 	keys = make([]interface{}, 0, len(m))
 	for k := range m {
@@ -126,6 +108,7 @@ func GetMapKeys(m map[interface{}][]interface{}) (keys []interface{}) {
 
 var mapGuard sync.Mutex
 
+// GetSafeValue get value in some slice, under thread safe
 func GetSafeValue(f func() interface{}) (safeValue interface{}) {
 	mapGuard.Lock()
 	defer mapGuard.Unlock()
@@ -133,12 +116,14 @@ func GetSafeValue(f func() interface{}) (safeValue interface{}) {
 	return safeValue
 }
 
+// DoSafeSave do something, under thread safe
 func DoSafeSave(f func()) {
 	mapGuard.Lock()
 	defer mapGuard.Unlock()
 	f()
 }
 
+// PrintStack print the call stack
 func PrintStack() {
 	debug.PrintStack()
 }
