@@ -37,3 +37,5 @@ content/*.json
 */*.xlsx
 
 */__debug_bin
+gotest/gotest
+hexexport/hextool
