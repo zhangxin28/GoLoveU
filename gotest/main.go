@@ -13,7 +13,7 @@ import (
 
 func main() {
 	start := time.Now()
-	testChan()
+	testLongCoumpute()
 	fmt.Printf("一共持续了 %s\n", time.Since(start))
 
 	common.WaitUserEnterKeyToExit(false)
