@@ -1,24 +1,14 @@
 package search
 
 import (
+	"goloveu/goinactioncode/matcherssearch/data"
+	"goloveu/goinactioncode/matcherssearch/matchers"
 	"log"
 )
 
-// Result contains the result of a search.
-type Result struct {
-	Field   string
-	Content string
-}
-
-// Matcher defines the behavior required by types that want
-// to implement a new search type.
-type Matcher interface {
-	Search(feed *Feed, searchTerm string) ([]*Result, error)
-}
-
 // Match is launched as a goroutine for each individual feed to run
 // searches concurrently.
-func Match(matcher Matcher, feed *Feed, searchTerm string, results chan<- *Result) {
+func Match(matcher matchers.Matcher, feed *data.Feed, searchTerm string, results chan<- *data.Result) {
 	// Perform the search against the specified matcher.
 	searchResults, err := matcher.Search(feed, searchTerm)
 	if err != nil {
@@ -34,7 +24,7 @@ func Match(matcher Matcher, feed *Feed, searchTerm string, results chan<- *Resul
 
 // Display writes results to the console window as they
 // are received by the individual goroutines.
-func Display(results chan *Result) {
+func Display(results chan *data.Result) {
 	// The channel blocks until a result is written to the channel.
 	// Once the channel is closed the for loop terminates.
 	for result := range results {
