@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"goinactioncode"
+	"goloveu/goinactioncode"
+	_ "goloveu/goinactioncode/executers"
 )
 
 func main() {

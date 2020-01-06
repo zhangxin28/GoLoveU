@@ -2,6 +2,6 @@ module goloveu/basic_console
 
 go 1.13
 
-require goinactioncode v0.0.0
+require goloveu/goinactioncode v0.0.0
 
-replace goinactioncode => ../goinactioncode
+replace goloveu/goinactioncode => ../goinactioncode

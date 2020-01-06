@@ -1,7 +1,6 @@
 package matcherssearch
 
 import (
-	"goloveu/goinactioncode"
 	"goloveu/goinactioncode/matcherssearch/search"
 	"log"
 	"os"
@@ -17,10 +16,4 @@ func (m MatchersSearch) Run() {
 
 	// Perform the search for the specified term.
 	search.Run("president")
-}
-
-// init perfomrs to init the
-func init() {
-	var executer MatchersSearch
-	goinactioncode.RegisterExecuter("MatchersSearch", executer)
 }
