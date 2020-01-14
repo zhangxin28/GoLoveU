@@ -29,7 +29,6 @@ _testmain.go
 
 .vs/
 .vscode/
-*.code-workspace
 
 content/*.json
 *.xlsx
