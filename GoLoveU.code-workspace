@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "utils"
+		},
+		{
+			"path": "bbs-go-server"
 		}
 	],
 	"settings": {}

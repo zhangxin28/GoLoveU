@@ -38,3 +38,4 @@ content/*.json
 */__debug_bin
 basic_console/basic_console
 basic_console/main
+*.sum
