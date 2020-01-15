@@ -39,3 +39,4 @@ content/*.json
 basic_console/basic_console
 basic_console/main
 *.sum
+*.code-workspace
