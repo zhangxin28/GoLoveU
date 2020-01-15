@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "bbs-go-server"
+		},
+		{
+			"path": "tests"
 		}
 	],
 	"settings": {}
