@@ -123,11 +123,21 @@ func TestCheckPathExists(t *testing.T) {
 		want bool
 	}{
 		// TODO: Add test cases.
+		{
+			name: "test file exists for file go.mod",
+			args: args{path: "go.mod"},
+			want: true,
+		},
+		{
+			name: "test file not exists for file xxxnotexists.go",
+			args: args{path: "xxxnotexists.go"},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := common.CheckPathExists(tt.args.path); got != tt.want {
-				t.Errorf("CheckPathExists() = %v, want %v", got, tt.want)
+				t.Errorf("Case %s , CheckPathExists() = %v, want %v", tt.name, got, tt.want)
 			}
 		})
 	}
