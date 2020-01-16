@@ -52,6 +52,13 @@ func TestGetFileName(t *testing.T) {
 		wantFileSuffix   string
 	}{
 		// TODO: Add test cases.
+		{
+			name:             "test file go.mod",
+			args:             args{file: "go.mod"},
+			wantFileName:     "go.mod",
+			wantFileOnlyName: "go",
+			wantFileSuffix:   ".mod",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
