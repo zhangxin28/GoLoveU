@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "basic_console"
+		},
+		{
+			"path": "goinactioncode"
+		},
+		{
+			"path": "utils"
+		},
+		{
+			"path": "bbs-go-server"
+		},
+		{
+			"path": "tests"
+		}
+	],
+	"settings": {}
+}
