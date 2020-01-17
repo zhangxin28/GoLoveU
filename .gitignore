@@ -36,8 +36,7 @@ content/*.json
 */*.xlsx
 
 */__debug_bin
-basic_console/basic_console
-basic_console/main
+goloveu
 *.sum
 *.png
 *.jpg
