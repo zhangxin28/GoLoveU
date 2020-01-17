@@ -7,6 +7,12 @@ import (
 )
 
 func TestQueryParams(t *testing.T) {
+	dialect := ""
+	connStr := ""
+	if err := db.OpenDB(dialect, connStr, 5, 20, true); err != nil {
+		panic(err)
+	}
+
 	type User struct {
 		db.GormModel
 		Username    sql.NullString `gorm:"size:32;unique;" json:"username" form:"username"`
@@ -51,8 +57,8 @@ func TestQueryParams(t *testing.T) {
 				In("Username", tt.args.parameters["Username"]).
 				Eq("Email", tt.args.parameters["Email"])
 
-			user := &User{}
-			newSQLCnd.Build(db.DB()).Find(&user)
+			var user User
+			newSQLCnd.FindOne(db.DB(), &user)
 
 			if user.Username.Valid && user.Username.String != tt.myUsername {
 				t.Errorf("FindUser() Username = %v, want %v", user.Username.String, tt.myUsername)
