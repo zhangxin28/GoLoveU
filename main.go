@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"goloveu/goinactioncode"
 	_ "goloveu/goinactioncode/executers"
-	gua "goloveu/utils/avatar"
-	"os"
 )
 
 func main() {
+	fmt.Println("Let US ROCK")
 	goinactioncode.RunSample("fdfsdfsdf")
 }

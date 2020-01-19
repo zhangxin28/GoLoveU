@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // IsEmpty shows whether a valus is empty
@@ -49,4 +51,24 @@ func ContainsIgnoreCase(search string, target []string) bool {
 	}
 	return false
 }
+
+// EncodePassword returns the bcrypt hash of the password at the given
+// cost. If the cost given is less than MinCost, the cost will be set to
+// DefaultCost, instead. Use CompareHashAndPassword, as defined in this package,
+// to compare the returned hashed password with its cleartext version.
+func EncodePassword(rawPassword string) string {
+	hash, err := bcrypt.GenerateFromPassword([]byte(rawPassword), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return string(hash)
+}
+
+// ValidatePassword compares a bcrypt hashed password with its possible
+// plaintext equivalent. Returns nil on success, or an error on failure.
+func ValidatePassword(encodePassword, inputPassword string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(encodePassword), []byte(inputPassword))
+	return err == nil
+}
+
 

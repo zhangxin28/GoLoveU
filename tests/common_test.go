@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"goloveu/utils"
 	"goloveu/utils/common"
 	"reflect"
 	"testing"
@@ -231,6 +232,30 @@ func TestPrintStack(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			common.PrintStack()
+		})
+	}
+}
+
+func TestPasswordEncryDecrp(t *testing.T) {
+	type args struct {
+		originalPwd string
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		// TODO: Add test cases.
+		{
+			name: "test password logic",
+			args: args{originalPwd: "goloveu"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			encodePwd := utils.EncodePassword(tt.args.originalPwd)
+			if result := utils.ValidatePassword(encodePwd, tt.args.originalPwd); result != true {
+				t.Errorf("PasswordEncodeValidate Logic OriginalPwd = %v, EncodePwd %v", tt.args.originalPwd, encodePwd)
+			}
 		})
 	}
 }
