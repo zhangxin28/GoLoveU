@@ -1,9 +1,10 @@
 package tests
 
 import (
+	"fmt"
 	"goloveu/utils/avatar"
-	"image"
-	"reflect"
+	"goloveu/utils/common"
+	"os"
 	"testing"
 )
 
@@ -12,47 +13,39 @@ func TestGenerate(t *testing.T) {
 		uid int64
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    []byte
-		wantErr bool
+		name string
+		args args
 	}{
 		// TODO: Add test cases.
 		{
-			name: "1",
+			name: "test generate file with uid = 1234",
 			args: args{uid: 1234},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := avatar.Generate(tt.args.uid)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Generate() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			pngBytes, err := avatar.Generate(tt.args.uid)
+			if err != nil {
+				t.Errorf("Generate() error = %v", err)
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Generate() = %v, want %v", got, tt.want)
+			filePath := fmt.Sprintf("%v.png", tt.args.uid)
+			fi, err := os.Create(filePath)
+			if err != nil {
+				t.Errorf("create file %v failed\n", filePath)
 			}
-		})
-	}
-}
+			fi.Write(pngBytes)
+			fi.Close()
+			fmt.Printf("create file %v success\n", filePath)
 
-func TestGenerateAvatar(t *testing.T) {
-	type args struct {
-		uid int64
-	}
-	tests := []struct {
-		name string
-		args args
-		want image.Image
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := avatar.GenerateAvatar(tt.args.uid); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GenerateAvatar() = %v, want %v", got, tt.want)
+			fileExistFlag := common.CheckPathExists(filePath)
+			if !fileExistFlag {
+				t.Errorf("Generated file not existsed\n")
 			}
+			err = os.Remove(filePath)
+			if err != nil {
+				t.Errorf("delete file %v failed\n", filePath)
+			}
+			fmt.Printf("delete file %v success\n", filePath)
 		})
 	}
 }
