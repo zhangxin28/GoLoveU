@@ -36,8 +36,8 @@ content/*.json
 */*.xlsx
 
 */__debug_bin
-goloveu
 *.sum
 *.png
 *.jpg
+bin/*
 
