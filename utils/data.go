@@ -97,13 +97,13 @@ func TimeFormat(time time.Time, layout string) string {
 // same layout losslessly, but the exact instant used in the representation will
 // differ by the actual zone offset. To avoid such problems, prefer time layouts
 // that use a numeric zone offset, or use ParseInLocation.
-func TimeParse(value, layout string) (time.Time, error){
-	return time.Parse(layout,value)
+func TimeParse(value, layout string) (time.Time, error) {
+	return time.Parse(layout, value)
 }
 
 // GetDay return a day format with yyyyMMdd
-func GetDay(time time.Time) int{
-	ret, _ :=strconv.Atoi(time.Format("20060102"))
+func GetDay(time time.Time) int {
+	ret, _ := strconv.Atoi(time.Format("20060102"))
 	return ret
 }
 
@@ -112,8 +112,8 @@ func WithTimeAsStartOfDay(t time.Time) time.Time {
 	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
 }
 
- // PrettyTime represents
- /**
+// PrettyTime represents
+/**
  * 将时间格式换成 xx秒前，xx分钟前...
  * 规则：
  * 59秒--->刚刚
@@ -123,7 +123,7 @@ func WithTimeAsStartOfDay(t time.Time) time.Time {
  * 前天--->前天 hh:mm（前天 16:15）
  * 前天以后--->mm-dd（2月18日）
  */
- func PrettyTime(timestamp int64) string {
+func PrettyTime(timestamp int64) string {
 	_time := TimeFromTimestamp(timestamp)
 	_duration := (NowTimestamp() - timestamp) / 1000
 	if _duration < 60 {
@@ -140,4 +140,3 @@ func WithTimeAsStartOfDay(t time.Time) time.Time {
 		return TimeFormat(_time, FMT_DATE)
 	}
 }
-
