@@ -55,7 +55,7 @@ type Config struct {
 	// smtp
 	SMTP struct {
 		Host     string `yaml:"Host"`
-		Port     int `yaml:"Port"`
+		Port     string `yaml:"Port"`
 		Username string `yaml:"Username"`
 		Password string `yaml:"Password"`
 		SSL      bool   `yaml:"SSL"`
