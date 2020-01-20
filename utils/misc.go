@@ -2,9 +2,10 @@ package utils
 
 import (
 	"fmt"
+	"golang.org/x/crypto/bcrypt"
+	"os"
 	"reflect"
 	"strings"
-	"golang.org/x/crypto/bcrypt"
 )
 
 // IsEmpty shows whether a valus is empty
@@ -71,4 +72,29 @@ func ValidatePassword(encodePassword, inputPassword string) bool {
 	return err == nil
 }
 
+// WriteString 写入内容
+func WriteString(path string, content string, append bool) error {
+	flag := os.O_RDWR | os.O_CREATE
+	if append {
+		flag = flag | os.O_APPEND
+	}
+	file, err := os.OpenFile(path, flag, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	_, err = file.WriteString(content)
+	return err
+}
 
+// AppendLine 追加行
+func AppendLine(path, content string) error {
+	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	content = strings.Join([]string{content, "\n"}, "")
+	_, err = file.WriteString(content)
+	return err
+}
