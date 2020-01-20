@@ -48,7 +48,7 @@ func (n *Node) Generate() ID {
 	n.mu.Lock()         // 保证并发安全，加锁
 	defer n.mu.Unlock() // 方法运行完毕后解锁
 
-	// 获取当前时间的时间错，毫秒
+	// 获取当前时间的时间戳，毫秒
 	nowMillisecondstemp := utils.NowTimestamp()
 
 	if n.timestamp == nowMillisecondstemp {

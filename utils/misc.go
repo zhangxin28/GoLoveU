@@ -3,6 +3,8 @@ package utils
 import (
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"os"
 	"reflect"
 	"strings"
@@ -97,4 +99,18 @@ func AppendLine(path, content string) error {
 	content = strings.Join([]string{content, "\n"}, "")
 	_, err = file.WriteString(content)
 	return err
+}
+
+// YamlUnmarshal returns a yaml object
+func YamlUnmarshal(yamlFilename string, out interface{}) error {
+	file, err := ioutil.ReadFile(yamlFilename)
+	if err != nil {
+		return err
+	}
+
+	err = yaml.Unmarshal(file, out)
+	if err != nil {
+		return err
+	}
+	return nil
 }
