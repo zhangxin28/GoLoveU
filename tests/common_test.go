@@ -3,8 +3,9 @@ package tests
 import (
 	"goloveu/utils"
 	"goloveu/utils/common"
-	"reflect"
+	"goloveu/utils/email"
 	"testing"
+	"fmt"
 )
 
 func TestCheckError(t *testing.T) {
@@ -77,43 +78,6 @@ func TestGetFileName(t *testing.T) {
 	}
 }
 
-func TestGetFiles(t *testing.T) {
-	type args struct {
-		filePrefix string
-	}
-	tests := []struct {
-		name      string
-		args      args
-		wantFiles []string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if gotFiles := common.GetFiles(tt.args.filePrefix); !reflect.DeepEqual(gotFiles, tt.wantFiles) {
-				t.Errorf("GetFiles() = %v, want %v", gotFiles, tt.wantFiles)
-			}
-		})
-	}
-}
-
-func TestCreateNewFolder(t *testing.T) {
-	type args struct {
-		path string
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			common.CreateNewFolder(tt.args.path)
-		})
-	}
-}
-
 func TestCheckPathExists(t *testing.T) {
 	type args struct {
 		path string
@@ -144,98 +108,6 @@ func TestCheckPathExists(t *testing.T) {
 	}
 }
 
-func TestGetArrayIndex(t *testing.T) {
-	type args struct {
-		value       interface{}
-		compareFunc common.CompareFunc
-		values      []interface{}
-	}
-	tests := []struct {
-		name string
-		args args
-		want int
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := common.GetArrayIndex(tt.args.value, tt.args.compareFunc, tt.args.values...); got != tt.want {
-				t.Errorf("GetArrayIndex() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestGetMapKeys(t *testing.T) {
-	type args struct {
-		m map[interface{}][]interface{}
-	}
-	tests := []struct {
-		name     string
-		args     args
-		wantKeys []interface{}
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if gotKeys := common.GetMapKeys(tt.args.m); !reflect.DeepEqual(gotKeys, tt.wantKeys) {
-				t.Errorf("GetMapKeys() = %v, want %v", gotKeys, tt.wantKeys)
-			}
-		})
-	}
-}
-
-func TestGetSafeValue(t *testing.T) {
-	type args struct {
-		f func() interface{}
-	}
-	tests := []struct {
-		name          string
-		args          args
-		wantSafeValue interface{}
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if gotSafeValue := common.GetSafeValue(tt.args.f); !reflect.DeepEqual(gotSafeValue, tt.wantSafeValue) {
-				t.Errorf("GetSafeValue() = %v, want %v", gotSafeValue, tt.wantSafeValue)
-			}
-		})
-	}
-}
-
-func TestDoSafeSave(t *testing.T) {
-	type args struct {
-		f func()
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			common.DoSafeSave(tt.args.f)
-		})
-	}
-}
-
-func TestPrintStack(t *testing.T) {
-	tests := []struct {
-		name string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			common.PrintStack()
-		})
-	}
-}
-
 func TestPasswordEncryDecrp(t *testing.T) {
 	type args struct {
 		originalPwd string
@@ -256,6 +128,46 @@ func TestPasswordEncryDecrp(t *testing.T) {
 			if result := utils.ValidatePassword(encodePwd, tt.args.originalPwd); result != true {
 				t.Errorf("PasswordEncodeValidate Logic OriginalPwd = %v, EncodePwd %v", tt.args.originalPwd, encodePwd)
 			}
+		})
+	}
+}
+
+
+func TestBuildEmailTemplate(t *testing.T) {
+	type args struct {
+		title        string
+		content      string
+		quoteContent string
+		url          string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name:"test building email template with no error",
+			args: args{
+				title: "test title",
+				content: "oh, this is a test",
+				quoteContent: "oh yes, this is a test",
+				url:"https://www.emailtest.com/testurl",
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := email.BuildEmailTemplate(tt.args.title, tt.args.content, tt.args.quoteContent, tt.args.url)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("BuildEmailTemplate() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got == "" {
+				t.Errorf("BuildEmailTemplate() no any template")
+			}
+			fmt.Println(got)
 		})
 	}
 }
