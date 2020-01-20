@@ -40,7 +40,8 @@ var emailTemplate = `
 
 // BuildEmailTemplate builds the default email template
 func BuildEmailTemplate(title, content, quoteContent, url string) (string, error) {
-	tpl, err := template.New("emailTemplate").Parse(emailTemplate)
+	//tpl, err := template.New("emailTemplate").Parse(emailTemplate)
+	tpl, err := template.ParseFiles("../config/email-template.tmpl")
 	if err != nil {
 		utils.LogError(err)
 		return "", err
