@@ -10,7 +10,7 @@ import (
 func main() {
 	fmt.Println("Let US ROCK")
 	//goinactioncode.RunSample("fdfsdfsdf")
-	n := utils.TreeNode{
+	n := &utils.TreeNode{
 		Name: "root",
 	}
 	l1 := n.AddLeftNode("l1")
@@ -19,5 +19,9 @@ func main() {
 	_ = l1.AddRightNode("lr2")
 	_ = r1.AddRightNode("rr2")
 
-	n.Trans()
+	utils.TransNodeDLR(n)
+	fmt.Println()
+	utils.TransNodeLDR(n)
+	fmt.Println()
+	utils.TransNodeLRD(n)
 }
