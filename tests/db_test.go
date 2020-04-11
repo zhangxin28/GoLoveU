@@ -44,8 +44,8 @@ func TestQueryParams(t *testing.T) {
 			args: args{
 				selectors: []string{"Username", "Email"},
 				parameters: map[string][]string{
-					"Username": []string{"Simon", "Bob"},
-					"Email":    []string{"simon@testgo.com"},
+					"Username": {"Simon", "Bob"},
+					"Email":    {"simon@testgo.com"},
 				},
 			},
 		},
