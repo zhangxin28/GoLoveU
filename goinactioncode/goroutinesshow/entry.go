@@ -1,7 +1,10 @@
 package gorountinesshow
 
 import (
+	"goloveu/goinactioncode/goroutinesshow/chars"
 	"goloveu/goinactioncode/goroutinesshow/player"
+	"goloveu/goinactioncode/goroutinesshow/prime"
+	"goloveu/goinactioncode/goroutinesshow/relayrace"
 	"log"
 	"os"
 )
@@ -16,4 +19,13 @@ func (gr GoRountinesShow) Run() {
 
 	// Perform the player to Run
 	player.Run()
+
+	// Perform the chars to Run
+	chars.Run()
+
+	// Perform the prime to Run
+	prime.Run()
+
+	// Perform the ralayrace to Run
+	relayrace.Run()
 }

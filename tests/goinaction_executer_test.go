@@ -12,8 +12,8 @@ func TestGoInActionExecuters(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{
-			name:        "test go in actin gorountines - players",
-			excutername: "grShow",
+			name:        "test go in actin gorountines",
+			excutername: "grShow", //"MatchersSearch","grShow"
 		},
 	}
 	for _, tt := range tests {
