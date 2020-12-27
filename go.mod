@@ -1,8 +1,9 @@
 module goloveu
 
-go 1.13
+go 1.15
 
 require (
+	github.com/headfirstgo/keyboard v0.0.0-20170926053303-9930bcf72703
 	github.com/issue9/identicon v1.0.1
 	github.com/jinzhu/gorm v1.9.12
 	github.com/jordan-wright/email v0.0.0-20190819015918-041e0cec78b0

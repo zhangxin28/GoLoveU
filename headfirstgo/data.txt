@@ -1,0 +1,16 @@
+The Scan method on bufio.Scanner 
+is designed to be used as part of a for loop. 
+It will read a single line of text from the file, 
+returning true if it read
+data successfully and false if it did not. 
+If Scan is used as the condition on
+a for loop, the loop will continue running as 
+long as there is more data to
+be read. Once the end of the file is reached (or there’s an error), 
+Scan will return false , 
+and the loop will exit.
+After calling the Scan method on the bufio.Scanner , 
+calling the Text
+method returns a string with the data that was read. 
+For this program, 
+we simply call Println within the loop to print each line out.
