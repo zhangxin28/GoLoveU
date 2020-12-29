@@ -12,7 +12,9 @@ func main() {
 	// RunReadFile()
 	// RunCount()
 	// RunCountWithMap()
-	RunMagazine()
+	// RunMagazine()
+	RunReceiver()
+
 }
 
 func interestFunc() {
