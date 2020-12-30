@@ -4,6 +4,11 @@ import (
 	"fmt"
 )
 
+type mystruct struct {
+	name string
+	age  int
+}
+
 func main() {
 	fmt.Println("Head First Go!")
 	// RunPassFail()
@@ -13,7 +18,8 @@ func main() {
 	// RunCount()
 	// RunCountWithMap()
 	// RunMagazine()
-	RunReceiver()
+	// RunReceiver()
+	RunCalendar()
 
 }
 
