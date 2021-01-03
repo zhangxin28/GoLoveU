@@ -43,6 +43,7 @@ func RunReadFile() {
 		sum, average)
 }
 
+// `...` means this function is a varadic function
 func averageandsum(numbers ...float64) (float64, float64) {
 	if len(numbers) == 0 {
 		return 0, 0
